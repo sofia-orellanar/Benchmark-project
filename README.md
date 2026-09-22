@@ -79,7 +79,7 @@ The S288C reference genome is used for reference-based evaluation (QUAST, BUSCO)
 datasets download genome accession GCA_000146045.2 --include genome
 ```
 
-Don't forget to unzip it!
+**Don't forget to unzip it!**
 ```bash
 unzip ncbi_dataset.zip -d GCA_000146045.2
 ```
