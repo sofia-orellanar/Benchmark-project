@@ -54,8 +54,4 @@ to install SRA toolkit in a conda enviroment you must run this command:
 conda create -n snakemake_env -c conda-forge -c bioconda -c nodefaults snakemake
 ```
 
-**Note:** You do not need to do run the 'create -n nameofyourenvironemt' part if you have already an enviroment created, you can just do 
-```bash
-conda activate nameofyourenvironemt
-```
-and install the softwares inside the enviroment. However, I do recomment having a separated enviroment for each software.
+**Note:** Note: You do not need to run the `create -n nameofyourenvironment` part if you already have an environment created — you can just do `conda activate nameofyourenvironment` and install the software inside the environment. However, I do recommend having a separate environment for each software.
