@@ -16,20 +16,20 @@ This project requires Miniconda and the following bioinformatics tools. Follow t
 
 Once Miniconda is installed, most of these tools can also be installed via Bioconda, for example:
 
-​```bash
+```bash
 conda install bioconda::megahit
 conda install bioconda::spades
-​```
+```
 
 **Don't forget to create your enviroment!**
 
-​```bash
+```bash
 conda create -n project
-​```
+```
 
 redundans is not available via conda and must be installed from its GitHub repository (see link above). If you would like to install it in a conda environment you must run this command:
 
-​```bash
+```bash
 conda create -n redundans -c conda-forge -c bioconda python=3.10 redundans
 ​```
 
