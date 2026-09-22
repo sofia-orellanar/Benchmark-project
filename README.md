@@ -16,9 +16,46 @@ This project requires Miniconda and the following bioinformatics tools. Follow t
 
 Once Miniconda is installed, most of these tools can also be installed via Bioconda, for example:
 
-\`\`\`bash
+​```bash
 conda install bioconda::megahit
 conda install bioconda::spades
-\`\`\`
+​```
 
-Note: redundans is not available via conda and must be installed from its GitHub repository (see link above).
+**Don't forget to create your enviroment!**
+
+​```bash
+conda create -n project
+​```
+
+redundans is not available via conda and must be installed from its GitHub repository (see link above). If you would like to install it in a conda environment you must run this command:
+
+​```bash
+conda create -n redundans -c conda-forge -c bioconda python=3.10 redundans
+​```
+
+to install BUSCO in a conda enviroment you must run this command:
+
+```bash
+conda create -n busco_env -c conda-forge -c bioconda busco
+```
+
+to install QUAST in a conda enviroment you must run this command:
+```bash
+conda create -n quast_env -c conda-forge -c bioconda quast
+```
+
+to install SRA toolkit in a conda enviroment you must run this command:
+```bash
+conda create -n sra_env -c conda-forge -c bioconda sra-tools
+```
+
+to install SRA toolkit in a conda enviroment you must run this command:
+```bash
+conda create -n snakemake_env -c conda-forge -c bioconda -c nodefaults snakemake
+```
+
+**Note:** You do not need to do run the "create -n nameofyourenvironemt" part if you have already an enviroment created, you can just do 
+```bash
+conda activate -n project
+```
+and install the softwares inside the enviroment. However, I do recomment having a separated enviroment for each software.
