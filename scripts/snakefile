@@ -1,0 +1,77 @@
+configfile: "config.yaml"
+
+R1 = config["reads"]["r1"]
+R2 = config["reads"]["r2"]
+REF = config["reference"]
+REPLICATES = config["replicates"]
+THREADS = config["threads"]
+
+rule all:
+    input:
+        expand("benchmarks/megahit_rep{r}.tsv", r=REPLICATES),
+        expand("benchmarks/spades_rep{r}.tsv", r=REPLICATES),
+        expand("benchmarks/megahit_redundans_rep{r}.tsv", r=REPLICATES),
+        expand("benchmarks/spades_redundans_rep{r}.tsv", r=REPLICATES)
+
+rule megahit:
+    input:
+        r1=R1,
+        r2=R2
+    output:
+        contigs="results/megahit_rep{r}/final.contigs.fa"
+    benchmark:
+        "benchmarks/megahit_rep{r}.tsv"
+    threads: THREADS
+    shell:
+        """
+        rm -rf results/megahit_rep{wildcards.r}
+        megahit -1 {input.r1} -2 {input.r2} -t {threads} -o results/megahit_rep{wildcards.r}
+        """
+
+rule spades:
+    input:
+        r1=R1,
+        r2=R2
+    output:
+        contigs="results/spades_rep{r}/contigs.fasta"
+    benchmark:
+        "benchmarks/spades_rep{r}.tsv"
+    threads: THREADS
+    shell:
+        """
+        spades.py -1 {input.r1} -2 {input.r2} -t {threads} -o results/spades_rep{wildcards.r}
+        """
+
+rule redundans_megahit:
+    input:
+        contigs="results/megahit_rep{r}/final.contigs.fa",
+        r1=R1,
+        r2=R2
+    output:
+        contigs="results/megahit_redundans_rep{r}/scaffolds.reduced.fa"
+    benchmark:
+        "benchmarks/megahit_redundans_rep{r}.tsv"
+    threads: THREADS
+    shell:
+        """
+        redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+            -o results/megahit_redundans_rep{wildcards.r} \
+            --noscaffolding --nogapclosing -t {threads}
+        """
+
+rule redundans_spades:
+    input:
+        contigs="results/spades_rep{r}/contigs.fasta",
+        r1=R1,
+        r2=R2
+    output:
+        contigs="results/spades_redundans_rep{r}/scaffolds.reduced.fa"
+    benchmark:
+        "benchmarks/spades_redundans_rep{r}.tsv"
+    threads: THREADS
+    shell:
+        """
+        redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+            -o results/spades_redundans_rep{wildcards.r} \
+            --noscaffolding --nogapclosing -t {threads}
+        """
