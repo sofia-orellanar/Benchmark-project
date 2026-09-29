@@ -2,3 +2,8 @@ reads/
 GCA_000146045.2/
 ncbi_dataset.zip
 SRR5221375/
+datasets
+GCA_000181435.1/
+yjm789_dataset.zip
+datasets
+.snakemake
