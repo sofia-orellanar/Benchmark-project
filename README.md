@@ -54,7 +54,33 @@ to install SRA toolkit in a conda enviroment you must run this command:
 conda create -n snakemake_env -c conda-forge -c bioconda -c nodefaults snakemake
 ```
 
-**Note:** Note: You do not need to run the `create -n nameofyourenvironment` part if you already have an environment created — you can just do `conda activate nameofyourenvironment` and install the software inside the environment. However, I do recommend having a separate environment for each software.
+**Note:** Note: You do not need to run the `create -n nameofyourenvironment` part if you already have an environment created — you can just do `conda activate nameofyourenvironment` and install the software inside the environment. However, I do recommend having a separate environment for each software. If you decide to include all the softwares in one environment you can do this command
+
+``` bash
+conda create -n assembler-benchmark -c bioconda -c conda-forge snakemake megahit spades quast busco python=3.10
+```
+
+However redundans still needs a separate installation so we can do
+
+```bash
+conda activate assembler-benchmark
+git clone --recursive https://github.com/Gabaldonlab/redundans.git
+cd redundans
+./INSTALL.sh
+```
+
+To make sure everything is correctly installed we can run this command
+
+```bash 
+conda activate assembler-benchmark
+snakemake --version
+megahit --version
+spades.py --version
+quast.py --version
+busco --version
+```
+
+and for redundans we can do ```./redundans.py --version```
 
 ## Data Accessibility
 
