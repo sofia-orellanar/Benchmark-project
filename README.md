@@ -31,9 +31,9 @@ redundans is not available via conda and must be installed from its GitHub repos
 
 ```bash
 conda create -n redundans -c conda-forge -c bioconda python=3.10 redundans
-​```
+```
 
-to install BUSCO in a conda enviroment you must run this command:
+to install BUSCO in a conda enviroment you must run this command
 
 ```bash
 conda create -n busco_env -c conda-forge -c bioconda busco
@@ -100,7 +100,7 @@ This produces two paired FASTQ files in the `reads/` directory: `SRR5221375_1.fa
 
 ### Downloading the reference genome
 
-The S288C reference genome is used for reference-based evaluation (QUAST, BUSCO) and is downloaded from NCBI:
+**S288C reference genome:** used for reference-based evaluation (QUAST, BUSCO) and is downloaded from NCBI
 ```bash
 datasets download genome accession GCA_000146045.2 --include genome
 ```
@@ -113,3 +113,13 @@ unzip ncbi_dataset.zip -d GCA_000146045.2
 The genome FASTA will be inside at a path like GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_*_genomic.fna 
 
 Run ```find GCA_000146045.2 -name "*.fna"``` to get the exact path once unzipped. It will be helpful for the future!
+
+**YJM789 reference genome:** used for reference-based evaluation (QUAST, BUSCO) and is downloaded from NCBI:
+```bash
+datasets download genome accession GCA_000181435.1 --include genome
+```
+
+**Don't forget to unzip it!**
+```bash
+unzip ncbi_dataset.zip -d GCA_000181435.1
+```
