@@ -39,7 +39,7 @@ rule spades:
     threads: THREADS
     shell:
         """
-        spades.py -1 {input.r1} -2 {input.r2} -t {threads} -o results/spades_rep{wildcards.r}
+        spades.py --isolate -1 {input.r1} -2 {input.r2} -t {threads} -o results/spades_rep{wildcards.r}
         """
 
 rule redundans_megahit:
