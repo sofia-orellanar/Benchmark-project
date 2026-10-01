@@ -54,7 +54,7 @@ rule redundans_megahit:
     threads: THREADS
     shell:
         """
-        redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        redundans/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/megahit_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
         """
@@ -71,7 +71,7 @@ rule redundans_spades:
     threads: THREADS
     shell:
         """
-        redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        redundans/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/spades_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
         """
