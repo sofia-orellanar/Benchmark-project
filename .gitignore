@@ -7,4 +7,6 @@ GCA_000181435.1/
 yjm789_dataset.zip
 datasets
 .snakemake
-resultsredundans/
+results
+redundans
+benchmarks
