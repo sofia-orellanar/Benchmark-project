@@ -54,7 +54,8 @@ rule redundans_megahit:
     threads: THREADS
     shell:
         """
-        redundans/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        rm -rf results/megahit_redundans_rep{wildcards.r}
+        /home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/megahit_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
         """
@@ -71,7 +72,8 @@ rule redundans_spades:
     threads: THREADS
     shell:
         """
-        redundans/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        rm -rf results/spades_redundans_rep{wildcards.r}
+        /home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/spades_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
         """
