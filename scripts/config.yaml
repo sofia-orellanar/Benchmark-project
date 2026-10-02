@@ -4,9 +4,10 @@ reads:
   r1: "reads/SRR5221375_1.fastq"
   r2: "reads/SRR5221375_2.fastq"
 
-# TODO: replace with the actual path from:
-# find GCA_000146045.2 -name "*.fna"
-reference: "GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_R64_genomic.fna"
+reference_s288c: "GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_R64_genomic.fna"
+reference_yjm789: "GCA_000181435.1/ncbi_dataset/data/GCA_000181435.1/GCA_000181435.1_ASM18143v1_genomic.fna"
+
+busco_lineage: "saccharomycetes_odb10"
 
 replicates: [1, 2, 3]
 

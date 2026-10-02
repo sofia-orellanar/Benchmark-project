@@ -2,16 +2,40 @@ configfile: "config.yaml"
 
 R1 = config["reads"]["r1"]
 R2 = config["reads"]["r2"]
-REF = config["reference"]
+REF_S288C = config["reference_s288c"]
+REF_YJM789 = config["reference_yjm789"]
+BUSCO_LINEAGE = config["busco_lineage"]
 REPLICATES = config["replicates"]
 THREADS = config["threads"]
+
+REDUNDANS = "/home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py"
+
+# Representative assembly (rep1) used for evaluation -- replicates 1-3 exist
+# to measure runtime/memory variance, not assembly content, which is
+# deterministic given the same input and tool version.
+ASSEMBLIES = {
+    "megahit": "results/megahit_rep1/final.contigs.fa",
+    "spades": "results/spades_rep1/contigs.fasta",
+    "megahit_redundans": "results/megahit_redundans_rep1/scaffolds.reduced.fa",
+    "spades_redundans": "results/spades_redundans_rep1/scaffolds.reduced.fa",
+}
+
+REFERENCES = {
+    "s288c": REF_S288C,
+    "yjm789": REF_YJM789,
+}
+
+TOOLS = list(ASSEMBLIES.keys())
+REFS = list(REFERENCES.keys())
 
 rule all:
     input:
         expand("benchmarks/megahit_rep{r}.tsv", r=REPLICATES),
         expand("benchmarks/spades_rep{r}.tsv", r=REPLICATES),
         expand("benchmarks/megahit_redundans_rep{r}.tsv", r=REPLICATES),
-        expand("benchmarks/spades_redundans_rep{r}.tsv", r=REPLICATES)
+        expand("benchmarks/spades_redundans_rep{r}.tsv", r=REPLICATES),
+        expand("results/quast/{tool}_vs_{ref}/report.tsv", tool=TOOLS, ref=REFS),
+        expand("results/busco/{tool}", tool=TOOLS)
 
 rule megahit:
     input:
@@ -39,6 +63,7 @@ rule spades:
     threads: THREADS
     shell:
         """
+        rm -rf results/spades_rep{wildcards.r}
         spades.py --isolate -1 {input.r1} -2 {input.r2} -t {threads} -o results/spades_rep{wildcards.r}
         """
 
@@ -55,7 +80,7 @@ rule redundans_megahit:
     shell:
         """
         rm -rf results/megahit_redundans_rep{wildcards.r}
-        /home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        {REDUNDANS} -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/megahit_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
         """
@@ -73,7 +98,34 @@ rule redundans_spades:
     shell:
         """
         rm -rf results/spades_redundans_rep{wildcards.r}
-        /home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py -f {input.contigs} -i {input.r1} {input.r2} \
+        {REDUNDANS} -f {input.contigs} -i {input.r1} {input.r2} \
             -o results/spades_redundans_rep{wildcards.r} \
             --noscaffolding --nogapclosing -t {threads}
+        """
+
+rule quast:
+    input:
+        asm=lambda wc: ASSEMBLIES[wc.tool],
+        ref=lambda wc: REFERENCES[wc.ref]
+    output:
+        report="results/quast/{tool}_vs_{ref}/report.tsv"
+    threads: THREADS
+    shell:
+        """
+        rm -rf results/quast/{wildcards.tool}_vs_{wildcards.ref}
+        quast.py {input.asm} -r {input.ref} \
+            -o results/quast/{wildcards.tool}_vs_{wildcards.ref} -t {threads}
+        """
+
+rule busco:
+    input:
+        asm=lambda wc: ASSEMBLIES[wc.tool]
+    output:
+        directory("results/busco/{tool}")
+    threads: THREADS
+    shell:
+        """
+        rm -rf results/busco/{wildcards.tool}
+        busco -i {input.asm} -o {wildcards.tool} --out_path results/busco \
+            -l {BUSCO_LINEAGE} -m genome -c {threads} -f
         """
