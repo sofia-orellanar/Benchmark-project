@@ -157,3 +157,6 @@ Once both references are downloaded, update `scripts/config.yaml` with the actua
 reference_s288c: "GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_R64_genomic.fna"
 reference_yjm789: "GCA_000181435.1/ncbi_dataset/data/GCA_000181435.1/GCA_000181435.1_ASM18143v1_genomic.fna"
 ```
+
+## Results 
+See [RESULTS.md](RESULTS.md) for the final metrics and key findings.
