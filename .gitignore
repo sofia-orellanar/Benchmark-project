@@ -10,3 +10,5 @@ datasets
 redundans
 benchmarks
 busco_downloads
+results/*
+!results/summary.md
