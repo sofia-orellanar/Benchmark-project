@@ -1,3 +1,12 @@
+# Benchmarking pipeline: MEGAHIT vs. SPAdes, with and without redundans
+# post-processing, evaluated against two reference genomes (S288C, YJM789).
+#
+# Each assembler is run in triplicate (REPLICATES) to measure runtime/memory
+# variance on the shared server. Evaluation (QUAST, BUSCO) is run only on
+# rep1 of each condition, since assembly content is deterministic given the
+# same input and tool version -- replicates exist for benchmarking, not to
+# generate multiple distinct assemblies.
+
 configfile: "config.yaml"
 
 R1 = config["reads"]["r1"]
@@ -8,6 +17,10 @@ BUSCO_LINEAGE = config["busco_lineage"]
 REPLICATES = config["replicates"]
 THREADS = config["threads"]
 
+# redundans is installed in its own dedicated conda environment (see README,
+# "Known Issues") due to a dependency chain that only resolves cleanly via
+# its Bioconda recipe. Called here by full path so the pipeline doesn't need
+# to activate that environment separately -- only assembler-benchmark does.
 REDUNDANS = "/home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py"
 
 # Representative assembly (rep1) used for evaluation -- replicates 1-3 exist
@@ -20,6 +33,9 @@ ASSEMBLIES = {
     "spades_redundans": "results/spades_redundans_rep1/scaffolds.reduced.fa",
 }
 
+# Both parent-strain references are used so QUAST comparisons can separate
+# genuine assembly errors from expected strain divergence (the hybrid genome
+# is ~50% S288C-derived, ~50% YJM789-derived).
 REFERENCES = {
     "s288c": REF_S288C,
     "yjm789": REF_YJM789,
@@ -28,6 +44,9 @@ REFERENCES = {
 TOOLS = list(ASSEMBLIES.keys())
 REFS = list(REFERENCES.keys())
 
+# Final target: all benchmark logs (12: 4 conditions x 3 replicates) plus
+# all evaluation outputs (8 QUAST reports: 4 conditions x 2 references;
+# 4 BUSCO runs: one per condition).
 rule all:
     input:
         expand("benchmarks/megahit_rep{r}.tsv", r=REPLICATES),
@@ -37,6 +56,9 @@ rule all:
         expand("results/quast/{tool}_vs_{ref}/report.tsv", tool=TOOLS, ref=REFS),
         expand("results/busco/{tool}", tool=TOOLS)
 
+# Run MEGAHIT on the raw reads. Output directory is cleared first so a
+# rerun after a previous failed/partial attempt always starts fresh rather
+# than resuming from stale intermediate files.
 rule megahit:
     input:
         r1=R1,
@@ -52,6 +74,11 @@ rule megahit:
         megahit -1 {input.r1} -2 {input.r2} -t {threads} -o results/megahit_rep{wildcards.r}
         """
 
+# Run SPAdes on the raw reads with --isolate, per SPAdes's own
+# recommendation for high-coverage, single-organism data. Note: --isolate
+# disables BayesHammer read error correction by design (confirmed expected
+# behavior, not a bug) -- see project write-up for discussion of this
+# tradeoff given this dataset's very high coverage and variable insert size.
 rule spades:
     input:
         r1=R1,
@@ -67,6 +94,10 @@ rule spades:
         spades.py --isolate -1 {input.r1} -2 {input.r2} -t {threads} -o results/spades_rep{wildcards.r}
         """
 
+# Applies redundans' contig-reduction step only (scaffolding and
+# gap-closing disabled via --noscaffolding --nogapclosing) so its effect on
+# heterozygosity-driven contig duplication can be isolated from its other
+# pipeline stages.
 rule redundans_megahit:
     input:
         contigs="results/megahit_rep{r}/final.contigs.fa",
@@ -103,6 +134,9 @@ rule redundans_spades:
             --noscaffolding --nogapclosing -t {threads}
         """
 
+# Reference-based accuracy and contiguity metrics (N50, L50, genome
+# fraction, duplication ratio, misassemblies) for each of the 4 assembly
+# conditions, against each of the 2 parent-strain references.
 rule quast:
     input:
         asm=lambda wc: ASSEMBLIES[wc.tool],
@@ -117,6 +151,10 @@ rule quast:
             -o results/quast/{wildcards.tool}_vs_{wildcards.ref} -t {threads}
         """
 
+# Genome completeness (Complete/Duplicated/Fragmented/Missing BUSCOs) for
+# each of the 4 assembly conditions. Comparing megahit vs. megahit_redundans
+# (and spades vs. spades_redundans) shows redundans' effect on duplicated
+# BUSCO count -- the clearest signal of what the reduction step is doing.
 rule busco:
     input:
         asm=lambda wc: ASSEMBLIES[wc.tool]
