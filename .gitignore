@@ -6,9 +6,7 @@ datasets
 GCA_000181435.1/
 yjm789_dataset.zip
 datasets
-.snakemake
-results
+.snakemake/
 redundans
 benchmarks
 busco_downloads
-!results/summary.md
