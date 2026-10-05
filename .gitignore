@@ -8,6 +8,5 @@ yjm789_dataset.zip
 datasets
 .snakemake/
 redundans
-benchmarks
 busco_downloads
 results/
