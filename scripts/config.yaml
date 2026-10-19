@@ -12,3 +12,6 @@ busco_lineage: "saccharomycetes_odb10"
 replicates: [1, 2, 3]
 
 threads: 8
+
+# Edit this path to point to the redundans.py script in your conda environment.
+redundans: "/home/sorellanarebolledo/miniconda3/envs/redundans/bin/redundans.py"
