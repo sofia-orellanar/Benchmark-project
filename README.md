@@ -120,43 +120,47 @@ This produces two paired FASTQ files in the `reads/` directory: `SRR5221375_1.fa
 
 **Note:** raw coverage is very high (~200×+) relative to the ~12 Mb genome. Reads will be used at full coverage initially; subsampling to a lower, more typical coverage (e.g., via `seqtk sample`) may be applied later if runtime or resource constraints on the shared server make it necessary.
 
-## Downloading the reference genome
+## Downloading the reference genomes
 
-**S288C reference genome:** used for reference-based evaluation (QUAST, BUSCO) and is downloaded from NCBI
+Both references are downloaded from NCBI with the NCBI Datasets command-line tool (`datasets`).
+
+**Note:** if `datasets: command not found`, download it directly and run it as `./datasets` instead of `datasets` in the commands below:
 ```bash
-datasets download genome accession GCA_000146045.2 --include genome
+curl -o datasets 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/datasets'
+chmod +x datasets
 ```
 
-**Don't forget to unzip it!**
+### S288C reference genome
+
+Used for reference-based evaluation (QUAST).
+
 ```bash
-unzip ncbi_dataset.zip -d GCA_000146045.2
+datasets download genome accession GCA_000146045.2 --include genome --filename s288c_dataset.zip
+unzip s288c_dataset.zip -d GCA_000146045.2
 ```
 
-The genome FASTA will be inside at a path like GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_*_genomic.fna 
-
-Run ```find GCA_000146045.2 -name "*.fna"``` to get the exact path once unzipped. It will be helpful for the future!
-
-**YJM789 reference genome:** used for reference-based evaluation (QUAST, BUSCO) and is downloaded from NCBI:
+The genome FASTA will be inside at a path like `GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_*_genomic.fna`. Run this to get the exact path (you'll need it for the config file below):
 ```bash
-datasets download genome accession GCA_000181435.1 --include genome
+find GCA_000146045.2 -name "*.fna"
 ```
 
-**Don't forget to unzip it!**
+### YJM789 reference genome
+
+Also used for reference-based evaluation (QUAST), so that real assembly errors can be told apart from expected strain divergence in the hybrid.
+
 ```bash
-unzip ncbi_dataset.zip -d GCA_000181435.1
+datasets download genome accession GCA_000181435.1 --include genome --filename yjm789_dataset.zip
+unzip yjm789_dataset.zip -d GCA_000181435.1
+find GCA_000181435.1 -name "*.fna"
 ```
-
-Run ```find GCA_000181435.1 -name "*.fna"``` to get the exact path once unzipped. It will be helpful for the future!
-
-**Note:** if `datasets: command not found`, download it directly: `curl -o datasets 'https://ftp.ncbi.nlm.nih.gov/pub/datasets/command-line/v2/linux-amd64/datasets' && chmod +x datasets` and run as `./datasets` instead.
 
 ## Updating the config (yaml) file
-Once both references are downloaded, update `scripts/config.yaml` with the actual paths:
+Once both references are downloaded, update `scripts/config.yaml` with the actual paths from the `find` commands above:
 
 ```yaml
 reference_s288c: "GCA_000146045.2/ncbi_dataset/data/GCA_000146045.2/GCA_000146045.2_R64_genomic.fna"
 reference_yjm789: "GCA_000181435.1/ncbi_dataset/data/GCA_000181435.1/GCA_000181435.1_ASM18143v1_genomic.fna"
 ```
 
-## Results 
+## Results
 See [RESULTS.md](RESULTS.md) for the final metrics and key findings.
