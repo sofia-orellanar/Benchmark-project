@@ -225,7 +225,7 @@ If a run is interrupted, re-run the same command and Snakemake resumes from the 
 
 ### What each step runs
 
-The pipeline runs these commands for you. The equivalent standalone versions (for rep1) are:
+The pipeline runs these commands for you. The equivalent standalone versions are:
 
 ```bash
 # MEGAHIT
@@ -247,7 +247,7 @@ busco -i results/megahit_rep1/final.contigs.fa -o megahit --out_path results/bus
 
 ### Quick test on a small dataset
 
-To check that the tools are installed correctly without a multi-hour run, subsample the reads (about 10x coverage) and run the two assemblers standalone:
+To check that the tools are installed correctly subsample the reads (about 10x coverage) and run the two assemblers standalone:
 
 ```bash
 conda activate assembler-benchmark
