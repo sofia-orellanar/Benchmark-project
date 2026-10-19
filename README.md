@@ -109,7 +109,7 @@ redundans.py --version   # should print a version number
 which redundans.py       # copy this path for the next step
 ```
 
-The Snakefile calls redundans directly by its full path, so the `redundans` environment does not need to be activated when running the pipeline; only `assembler-benchmark` does. **Update the `REDUNDANS` variable near the top of `scripts/snakefile` to the path printed by `which redundans.py` on your machine.**
+The Snakefile calls redundans directly by its full path, so the `redundans` environment does not need to be activated when running the pipeline; only `assembler-benchmark` does. **Update the `REDUNDANS` path at the end of `scripts/config.yaml` to the path printed by `which redundans.py` on your machine.**
 
 **5. Install the SRA Toolkit** (for downloading the reads)
 
